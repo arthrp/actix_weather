@@ -1,4 +1,4 @@
-use actix_web::{get, http::header::ContentType, middleware, web::{self, get}, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::header::ContentType, middleware, web::{self}, App, HttpResponse, HttpServer};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
@@ -27,7 +27,7 @@ fn gen_weather() -> WeatherResponse {
 }
 
 #[get("/")]
-async fn hello() -> impl Responder {
+async fn weather_measurement() -> HttpResponse {
     let w = gen_weather();
     let resp = serde_json::to_string(&w).unwrap();
 
@@ -45,9 +45,27 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Logger::default())
             .app_data(web::JsonConfig::default().limit(4096))
-            .service(hello)
+            .service(weather_measurement)
     })
     .bind(("127.0.0.1", port))?
     .run()
     .await
+}
+
+#[cfg(test)]
+mod tests {
+    use actix_web::{dev::Service, http, test};
+
+    use super::*;
+
+    #[actix_web::test]
+    async fn index_returns_ok(){
+        let app =
+        test::init_service(App::new().service(weather_measurement)).await;
+
+        let req = test::TestRequest::get().uri("/").to_request();
+        let response = app.call(req).await.unwrap();
+
+        assert_eq!(response.status(), http::StatusCode::OK);
+    }
 }
