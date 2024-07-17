@@ -21,7 +21,7 @@ fn gen_weather() -> WeatherResponse {
     };
 
     WeatherResponse {
-        temperature: t.to_owned(),
+        temperature: t,
         feeling: text.to_owned()
     }
 }
