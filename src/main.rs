@@ -11,13 +11,13 @@ struct WeatherResponse {
 fn gen_weather() -> WeatherResponse {
     let t = rand::thread_rng().gen_range(-30..50);
     let text = match t {
+        ..=-31 => "Extremely cold",
         -30..=-10 => "Freezing",
         -9..=5 => "Cold",
         6..=14 => "Chilly",
         15..=25 => "Warm",
         26..=35 => "Hot",
-        36.. => "Scorching",
-        _ => "unknown"
+        36.. => "Scorching"
     };
 
     WeatherResponse {
