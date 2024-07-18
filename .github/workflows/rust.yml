@@ -27,6 +27,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install grcov
       run: cargo install grcov
+    - name: Install llvm-tools
+      run: rustup component add llvm-tools-preview
     - name: Generate profraw files
       run: CARGO_INCREMENTAL=0 RUSTFLAGS='-Cinstrument-coverage' LLVM_PROFILE_FILE='target/cargo-test-%p-%m.profraw' cargo test
     - name: Run grcov
